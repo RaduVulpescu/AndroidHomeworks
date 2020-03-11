@@ -19,13 +19,14 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     ArrayList<Component> components = new ArrayList<>();
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.i("Lab3", "OnCreate has been called and content view has been set");
+        Log.i("Lab3OnCreate", "OnCreate has been called and content view has been set");
 
         ListView listView = findViewById(R.id.listView);
 
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getTitles(components));
         listView.setAdapter(adapter);
 
-        final TextView textView = findViewById(R.id.textView3);
+        textView = findViewById(R.id.textView3);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.i("Lab3", "OnCreate has been terminated");
+        Log.i("Lab3OnCreate", "OnCreate has been terminated");
     }
 
     @Override
@@ -61,56 +62,67 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        Log.i("Lab3", "onRestoreInstanceState has been terminated");
-        Log.i("Lab3", "onRestoreInstanceState has been terminated");
+        Log.i("Lab3OnRestore", "onRestoreInstanceState has been started");
+
+        if (savedInstanceState.containsKey("ComponentDescription")) {
+            textView.setText(savedInstanceState.getString("ComponentDescription"));
+            Log.i("Lab3OnRestore", "TextView has been restored");
+        } else {
+            Log.i("Lab3OnRestore", "No TextView to restore");
+        }
+
+        Log.i("Lab3OnRestore", "onRestoreInstanceState has been terminated");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i("Lab3OnSave", "onSaveInstanceState has been started");
+
+        outState.putString("ComponentDescription", textView.getText().toString());
+        Log.i("Lab3OnSave", "TextView state has been saved");
+
+        Log.i("Lab3OnSave", "onSaveInstanceState has been terminated");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        Log.i("Lab3", "onStart has been terminated");
-        Log.i("Lab3", "onStart has been terminated");
+        Log.i("Lab3OnStart", "onStart has been started");
+        Log.i("Lab3OnStart", "onStart has been terminated");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        Log.i("Lab3", "onResume has been terminated");
-        Log.i("Lab3", "onResume has been terminated");
+        Log.i("Lab3OnResume", "onResume has been started");
+        Log.i("Lab3OnResume", "onResume has been terminated");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        Log.i("Lab3", "onPause has been terminated");
-        Log.i("Lab3", "onPause has been terminated");
+        Log.i("Lab3OnPause", "onPause has been started");
+        Log.i("Lab3OnPause", "onPause has been terminated");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        Log.i("Lab3", "onStop has been terminated");
-        Log.i("Lab3", "onStop has been terminated");
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        Log.i("Lab3", "onSaveInstanceState has been terminated");
-        Log.i("Lab3", "onSaveInstanceState has been terminated");
+        Log.i("Lab3OnStop", "onStop has been started");
+        Log.i("Lab3OnStop", "onStop has been terminated");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.i("Lab3", "onDestroy has been terminated");
-        Log.i("Lab3", "onDestroy has been terminated");
+        Log.i("Lab3OnDestroy", "onDestroy has been started");
+        Log.i("Lab3OnDestroy", "onDestroy has been terminated");
     }
 
     private static ArrayList<String> getTitles(ArrayList<Component> components) {
@@ -132,6 +144,4 @@ public class MainActivity extends AppCompatActivity {
 
         return sb.toString();
     }
-
-
 }
