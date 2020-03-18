@@ -1,5 +1,8 @@
 package com.example.lab2;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -8,9 +11,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String EXTRA_MESSAGE = "com.example.lab2.MESSAGE";
     ArrayList<Component> components = new ArrayList<>();
     TextView textView;
 
@@ -28,14 +32,68 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("Lab3OnCreate", "OnCreate has been called and content view has been set");
 
+        components.add(new Component("RTX 2080", 3000, "Nvidia", "Great video card", ComponentType.VideoCard));
+        components.add(new Component("Ryzen 5 3600X", 1000, "AMD", "Great cpu", ComponentType.CPU));
+        components.add(new Component("PRIME B450M-A", 450, "ASUS", "Great motherboard", ComponentType.Motherboard));
+        components.add(new Component("Vengeance LPX Black 16GB", 600, "Corsair", "Great memory", ComponentType.Memory));
+
+        AlertDialog dialog = (AlertDialog) onCreateDialog(savedInstanceState);
+        dialog.show();
+
+        Log.i("Lab3OnCreate", "OnCreate has been terminated");
+    }
+
+    public void sendMessage(View view) {
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        String message = textView.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
+
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final ArrayList<Integer> selectedItems = new ArrayList<>();  // Where we track the selected items
+        String[] componentTypes = new String[] { "Video Cards", "CPUs", "Motherboards", "Memories" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Filter")
+                .setMultiChoiceItems(componentTypes, null,
+                        new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                if (isChecked) {
+                                    selectedItems.add(which);
+                                } else if (selectedItems.contains(which)) {
+                                    selectedItems.remove(Integer.valueOf(which));
+                                }
+                            }
+                        })
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        GenerateListView(selectedItems);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+        return builder.create();
+    }
+
+    public void GenerateListView(ArrayList<Integer> selectedItems) {
         ListView listView = findViewById(R.id.listView);
+        ArrayList<Component> selectedComponents = new ArrayList<>();
 
-        components.add(new Component("RTX 2080", 3000, "Nvidia", "Great video card"));
-        components.add(new Component("Ryzen 5 3600X", 1000, "AMD", "Great cpu"));
-        components.add(new Component("PRIME B450M-A", 450, "ASUS", "Great motherboard"));
-        components.add(new Component("Vengeance LPX Black 16GB", 600, "Corsair", "Great memory"));
+        for (Component component: components) {
+            if (selectedItems.contains(component.getType().ordinal())) {
+                selectedComponents.add(component);
+            }
+        }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getTitles(components));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getTitles(selectedComponents));
         listView.setAdapter(adapter);
 
         textView = findViewById(R.id.textView3);
@@ -48,8 +106,6 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(MainActivity.this, formatDescription(components.get(position)), Toast.LENGTH_SHORT).show();
             }
         });
-
-        Log.i("Lab3OnCreate", "OnCreate has been terminated");
     }
 
     @Override

@@ -5,12 +5,14 @@ public class Component {
     private int price;
     private String manufacturer;
     private String description;
+    private ComponentType type;
 
-    public Component(String title, int price, String manufacturer, String description) {
+    public Component(String title, int price, String manufacturer, String description, ComponentType type) {
         this.title = title;
         this.price = price;
         this.manufacturer = manufacturer;
         this.description = description;
+        this.type = type;
     }
 
     public String getTitle() {
@@ -43,5 +45,13 @@ public class Component {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ComponentType getType() {
+        return type;
+    }
+
+    public void setType(ComponentType type) {
+        this.type = type;
     }
 }
