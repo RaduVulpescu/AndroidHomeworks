@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.lab2.MESSAGE";
     ArrayList<Component> components = new ArrayList<>();
     TextView textView;
+    AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,26 +34,17 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("Lab3OnCreate", "OnCreate has been called and content view has been set");
 
-        components.add(new Component("RTX 2080", 3000, "Nvidia", "Great video card", ComponentType.VideoCard));
-        components.add(new Component("Ryzen 5 3600X", 1000, "AMD", "Great cpu", ComponentType.CPU));
-        components.add(new Component("PRIME B450M-A", 450, "ASUS", "Great motherboard", ComponentType.Motherboard));
-        components.add(new Component("Vengeance LPX Black 16GB", 600, "Corsair", "Great memory", ComponentType.Memory));
+        textView = findViewById(R.id.textView);
 
-        AlertDialog dialog = (AlertDialog) onCreateDialog(savedInstanceState);
-        dialog.show();
+        populateComponentsList();
+
+        dialog = (AlertDialog) onCreateDialog(savedInstanceState);
 
         Log.i("Lab3OnCreate", "OnCreate has been terminated");
     }
 
-    public void sendMessage(View view) {
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        String message = textView.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
-    }
-
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final ArrayList<Integer> selectedItems = new ArrayList<>();  // Where we track the selected items
+        final ArrayList<Integer> selectedItems = new ArrayList<>();
         String[] componentTypes = new String[] { "Video Cards", "CPUs", "Motherboards", "Memories" };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -71,19 +64,45 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        GenerateListView(selectedItems);
+                        generateListView(selectedItems);
+
+                        if (!selectedItems.isEmpty()) {
+                            textView.setText(R.string.select_description);
+                        } else {
+                            textView.setText(R.string.filter_description);
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
+                    public void onClick(DialogInterface dialog, int id) { }
                 });
 
         return builder.create();
     }
 
-    public void GenerateListView(ArrayList<Integer> selectedItems) {
+    public void sendComponentDescription(View view) {
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        String componentDescription = textView.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, componentDescription);
+        startActivity(intent);
+    }
+
+    public void openSettings(MenuItem item) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void openHelp(MenuItem item) {
+        Intent intent = new Intent(this, HelpActivity.class);
+        startActivity(intent);
+    }
+
+    public void displayFilter(View view) {
+        dialog.show();
+    }
+
+    public void generateListView(ArrayList<Integer> selectedItems) {
         ListView listView = findViewById(R.id.listView);
         ArrayList<Component> selectedComponents = new ArrayList<>();
 
@@ -95,8 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getTitles(selectedComponents));
         listView.setAdapter(adapter);
-
-        textView = findViewById(R.id.textView3);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -179,6 +196,13 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("Lab3OnDestroy", "onDestroy has been started");
         Log.i("Lab3OnDestroy", "onDestroy has been terminated");
+    }
+
+    private void populateComponentsList() {
+        components.add(new Component("RTX 2080", 3000, "Nvidia", "Great video card", ComponentType.VideoCard));
+        components.add(new Component("Ryzen 5 3600X", 1000, "AMD", "Great cpu", ComponentType.CPU));
+        components.add(new Component("PRIME B450M-A", 450, "ASUS", "Great motherboard", ComponentType.Motherboard));
+        components.add(new Component("Vengeance LPX Black 16GB", 600, "Corsair", "Great memory", ComponentType.Memory));
     }
 
     private static ArrayList<String> getTitles(ArrayList<Component> components) {

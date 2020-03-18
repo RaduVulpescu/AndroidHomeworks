@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">Lab 3</string>
+    <string name="app_name">Lab 4</string>
     <string name="action_settings">Settings</string>
     <string name="action_help">Help</string>
-    <string name="select_a_component_to_display_it_s_specs">Select a component to display it\'s specs</string>
+    <string name="filter_description">Hit \'Filter\' to search for components</string>
+    <string name="select_description">Select a component to display it\'s specs</string>
+    <string name="HelpTextView">Version 4.0</string>
 </resources>
